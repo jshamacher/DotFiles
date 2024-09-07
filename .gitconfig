@@ -1,0 +1,19 @@
+# This is Git's per-user configuration file.
+[color]
+	ui = auto
+[user]
+	email = hamacher@brutallogic.net
+	name = Josh Hamacher
+[alias]
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ci) %C(bold blue)<%an>%Creset' --abbrev-commit
+	show-files = diff-tree --no-commit-id --name-only -r HEAD
+[push]
+	default = current
+[init]
+	defaultBranch = main
+[pull]
+	rebase = true
+[merge]
+	conflictstyle = zdiff3
+[diff]
+	algorithm = histogram

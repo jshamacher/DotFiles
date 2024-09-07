@@ -1,0 +1,10 @@
+name: website
+root: ~/Projects/Website
+
+tmux_options: -2
+
+windows:
+    - server:
+        - docker-compose -f docker-compose-dev.yml up
+    - vim:
+    - cmd:

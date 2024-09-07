@@ -1,0 +1,10 @@
+name: Digital Ocean Kubernetes
+root: ~/Projects/DigitalOceanKubernetesConfiguration
+
+tmux_options: -2
+
+windows:
+- README:
+  - vi README.md
+- editor:
+- utility:

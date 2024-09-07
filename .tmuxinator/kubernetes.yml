@@ -1,0 +1,17 @@
+name: Kubernetes
+root: ~/Projects/KubernetesConfiguration
+
+tmux_options: -2
+
+windows:
+- master-1:
+  - ssh -p 22595 45.79.85.69
+- master-2:
+  - ssh -p 22595 45.79.85.69
+- node1:
+  - ssh -p 22595 45.33.56.227
+- node2:
+  - ssh -p 22595 45.79.88.63
+- README:
+  - vi README.md
+- local:

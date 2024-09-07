@@ -1,0 +1,11 @@
+name: cooker
+root: ~/Projects/Cooker
+
+tmux_options: -2
+
+windows:
+    - server:
+        - docker-compose -f docker-compose-dev.yml up --build
+    - utility:
+    - vim:
+    - cmd:

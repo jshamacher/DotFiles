@@ -15,6 +15,8 @@ bindkey -e
 export PAGER='less'
 export LESS='-F -M -R -X -z-4'
 
+export RIPGREP_CONFIG_PATH=~/.config/ripgreprc
+
 # You'd think 256 colors would "just work" nowadays.
 alias tmux='tmux -2'
 

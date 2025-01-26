@@ -35,6 +35,9 @@ alias grep='grep --color=always'
 # this alias, and if it finds it then it will also honor aliases in commands it runs.
 alias xargs='xargs '
 
+# I don't think I have ever intentionally used flow control.
+stty -ixon
+
 #
 # History.
 # For the most part, this exactly matches the zprezto settings - they got these right.

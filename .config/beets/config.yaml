@@ -1,0 +1,12 @@
+directory: /media/nas-music2
+import:
+  bell: yes
+  move: yes
+library: ~/.config/beets/musiclibrary.db
+per_disc_numbering: yes
+plugins: fetchart embedart lastgenre
+paths:
+  default: $albumartist/$album ($year)%aunique{}/$disc-$track $title
+  singleton: Non-Album/$artist/$title
+  comp: Various Artists/$album ($year)%aunique{}/$disc-$track $title
+  albumtype:soundtrack: Soundtracks/$album ($year)%aunique{}/$disc-$track $title

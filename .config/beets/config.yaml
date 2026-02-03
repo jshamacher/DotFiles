@@ -4,9 +4,18 @@ import:
   move: yes
 library: ~/.config/beets/musiclibrary.db
 per_disc_numbering: yes
-plugins: fetchart embedart lastgenre
+plugins: fetchart embedart zero lastgenre
+fetchart:
+  cautious: yes
+  enforce_ratio: yes
+  sources: coverart itunes amazon albumart filesystem
+embedart:
+  remove_art_file: yes
 paths:
   default: $albumartist/$album ($year)%aunique{}/$disc-$track $title
   singleton: Non-Album/$artist/$title
   comp: Various Artists/$album ($year)%aunique{}/$disc-$track $title
   albumtype:soundtrack: Soundtracks/$album ($year)%aunique{}/$disc-$track $title
+zero:
+  fields: comments
+  comments: ['EAC', 'ripped by', 'YOU HAVE']

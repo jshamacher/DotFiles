@@ -7,6 +7,7 @@
 	pager = delta
 [delta]
 	navigate = true
+	side-by-side = true
 [diff]
 	algorithm = histogram
 [init]

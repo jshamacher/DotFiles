@@ -4,5 +4,6 @@
 # Should not contain commands that produce output or assume that there is a TTY.
 
 # Ensure path arrays do not contain duplicates.
+path+=(~/.local/bin)
 typeset -gU path
 

@@ -47,6 +47,7 @@ return {
   {
     "neovim/nvim-lspconfig",
     event = { "BufReadPre", "BufNewFile" },
+    cmd = "LspServers",
     config = function()
       require("config.lsp")
     end,

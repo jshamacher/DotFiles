@@ -42,12 +42,15 @@ Completion uses `blink.cmp`. Its default keys include:
 
 ## Language servers
 
-Language servers are intentionally not downloaded behind your back. Install the server
-you want through Arch (where available), then add its nvim-lspconfig name to `servers` in
-`lua/config/lsp.lua`. For example:
+Language servers are intentionally not downloaded behind your back. Ruby, Python, Go,
+Rust, and JavaScript/TypeScript/React are configured. At startup Neovim enables only
+servers whose executable is installed, so a missing server does not cause an error every
+time a matching file is opened. Run `:LspServers` to see what is ready.
 
-```lua
-local servers = { "lua_ls", "pyright", "rust_analyzer", "ts_ls" }
+Most of the servers are available from the official Arch repositories:
+
+```sh
+sudo pacman -S --needed ruby-lsp pyright gopls rust-analyzer typescript-language-server
 ```
 
 Neovim provides `K`, `grn`, `gra`, `grr`, `gri`, and `grt` for common LSP actions.

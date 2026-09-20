@@ -5,3 +5,6 @@
 #if [ "Darwin" = "$(uname -s)" ]; then
 #  [ -s "$HOME/.bashrc" ] && . "$HOME/.bashrc"
 #fi
+
+export EDITOR=nvim
+export VISUAL=nvim

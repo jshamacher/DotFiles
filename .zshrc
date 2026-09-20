@@ -35,6 +35,8 @@ alias grep='grep --color=always'
 # this alias, and if it finds it then it will also honor aliases in commands it runs.
 alias xargs='xargs '
 
+alias vi='nvim'
+
 # I don't think I have ever intentionally used flow control.
 stty -ixon
 
@@ -94,13 +96,13 @@ WORDCHARS='*?_-.[]~&;!#$%^(){}<>'   # The default includes = and /.  By excludin
 # See http://zsh.sourceforge.net/Doc/Release/Prompt-Expansion.html
 #
 #TODO: As an alternative, simply display the shell level?
-function vim_indicator() {
-  if [ -n "$VIMRUNTIME" ]; then
-    echo "[VIM] "
-  fi
-}
+#function vim_indicator() {
+#  if [ -n "$VIMRUNTIME" ]; then
+#    echo "[VIM] "
+#  fi
+#}
 
 # <return code indicator> [login@host] (YY-MM-DD HH:MM:SS) [current directory]
 # prompt character (# for root, % for lesser beings)
-PROMPT="%(?.%F{green}✔.%F{red}%?) %{%F{yellow}%}[%n@%M] (%D %*) $(vim_indicator)[%4c]%{%F{default}%}
+PROMPT="%(?.%F{green}✔.%F{red}%?) %{%F{yellow}%}[%n@%M] (%D %*) [%4c]%{%F{default}%}
 %(!.%{%F{red}%}.%{%F{cyan}%})%#%{%F{default}%} "

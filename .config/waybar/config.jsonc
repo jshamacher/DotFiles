@@ -1,0 +1,48 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 28,
+    "spacing": 12,
+
+    "modules-right": [
+        "cpu",
+        "memory",
+        "network",
+        "pulseaudio",
+        "tray",
+        "clock"
+    ],
+
+    "cpu": {
+        "interval": 2,
+        "format": "CPU {usage}%"
+    },
+
+    "memory": {
+        "interval": 5,
+        "format": "MEM {percentage}%"
+    },
+
+    "network": {
+        "interval": 2,
+        "format-ethernet": "NET {bandwidthDownBytes}",
+        "format-wifi": "WIFI {signalStrength}%",
+        "format-disconnected": "NET down",
+        "tooltip-format": "{ifname}: {ipaddr}"
+    },
+
+    "pulseaudio": {
+        "format": "VOL {volume}%",
+        "format-muted": "VOL muted",
+        "scroll-step": 5
+    },
+
+    "tray": {
+        "spacing": 8
+    },
+
+    "clock": {
+        "format": "{:%a %b %d  %I:%M %p}",
+        "tooltip-format": "{:%Y-%m-%d}"
+    }
+}

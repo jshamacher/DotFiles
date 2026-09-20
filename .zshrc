@@ -103,6 +103,100 @@ WORDCHARS='*?_-.[]~&;!#$%^(){}<>'   # The default includes = and /.  By excludin
 #}
 
 # <return code indicator> [login@host] (YY-MM-DD HH:MM:SS) [current directory]
+# [git branch, with * when the worktree is dirty]
 # prompt character (# for root, % for lesser beings)
-PROMPT="%(?.%F{green}✔.%F{red}%?) %{%F{yellow}%}[%n@%M] (%D %*) [%4c]%{%F{default}%}
-%(!.%{%F{red}%}.%{%F{cyan}%})%#%{%F{default}%} "
+autoload -Uz add-zsh-hook
+setopt PROMPT_SUBST
+
+function _prompt_escape() {
+    # A literal percent in a path or branch name must not become a prompt escape.
+    REPLY=${1//\%/%%}
+}
+
+function _prompt_path() {
+    local display prefix='' base='' leaf
+    local -a components
+    local -i first index count
+
+    if [[ $PWD == $HOME ]]; then
+        display='~'
+    elif [[ $PWD == $HOME/* ]]; then
+        display="~/${PWD#$HOME/}"
+    else
+        display=$PWD
+    fi
+
+    if [[ $display == /* ]]; then
+        prefix='/'
+        display=${display#/}
+    fi
+
+    components=("${(@s:/:)display}")
+    count=${#components}
+
+    # Keep the leaf plus at most two parents. Mark omitted parents with an ellipsis.
+    first=1
+    if (( count > 3 )); then
+        first=$((count - 2))
+        prefix+='…/'
+    fi
+
+    leaf=${components[-1]:-/}
+    for (( index = first; index < count; index++ )); do
+        base+="${components[index]}/"
+    done
+
+    _prompt_escape "$prefix$base"
+    base=$REPLY
+    _prompt_escape "$leaf"
+    leaf=$REPLY
+    prompt_path="%F{yellow}${base}%F{cyan}${leaf}%f"
+}
+
+function _prompt_git() {
+    local git_output header branch dirty=''
+    local -a lines
+
+    git_output=$(GIT_OPTIONAL_LOCKS=0 command git status --porcelain=v1 --branch 2>/dev/null) || {
+        prompt_git=''
+        return
+    }
+
+    lines=("${(@f)git_output}")
+    header=${lines[1]#\#\# }
+
+    if [[ $header == 'No commits yet on '* ]]; then
+        branch=${header#No commits yet on }
+    elif [[ $header == 'Initial commit on '* ]]; then
+        branch=${header#Initial commit on }
+    elif [[ $header == 'HEAD (no branch)'* ]]; then
+        branch=$(command git rev-parse --short HEAD 2>/dev/null)
+        branch="detached:${branch:-unknown}"
+    else
+        branch=${header%%...*}
+        branch=${branch%% *}
+    fi
+
+    (( ${#lines} > 1 )) && dirty='*'
+    _prompt_escape "$branch"
+    branch=$REPLY
+    prompt_git=" %F{green}{${branch}%F{yellow}${dirty}%F{green}}%f"
+}
+
+function _prompt_update() {
+    local exit_status=$?
+
+    if (( exit_status == 0 )); then
+        prompt_result='%F{green}✔%f'
+    else
+        prompt_result="%F{red}${exit_status}%f"
+    fi
+
+    _prompt_path
+    _prompt_git
+}
+
+add-zsh-hook precmd _prompt_update
+
+PROMPT='${prompt_result} %F{yellow}[%n@%M] (%D %*) [${prompt_path}%F{yellow}]${prompt_git}%f
+%(!.%F{red}.%F{cyan})%#%f '

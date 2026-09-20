@@ -5,8 +5,6 @@
 #
 # Configure basic tools.
 #
-export EDITOR='vim'
-export VISUAL='vim'
 
 # Zsh is sometimes too smart for its own good - child shells will pick up the
 # editor setting and "helpfully" switch to vi key bindings.

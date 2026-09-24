@@ -1,0 +1,10 @@
+[Unit]
+Description=Inhibit suspend while Herdr agents are working
+
+[Service]
+ExecStart=%h/.local/bin/herdr-sleep-inhibitor
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target

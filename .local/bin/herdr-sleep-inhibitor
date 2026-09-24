@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+while true; do
+    if /home/hamacher/.local/share/mise/installs/herdr/latest/herdr agent list | jq -e '
+        .result.agents
+        | any(.agent_status == "working")
+    ' >/dev/null; then
+        if ! pgrep -f 'systemd-inhibit.*AI agent working' >/dev/null; then
+            systemd-inhibit \
+                --what=sleep \
+                --who="Herdr agent" \
+                --why="AI agent working" \
+                sleep infinity &
+        fi
+    else
+        pkill -f 'systemd-inhibit.*AI agent working' 2>/dev/null || true
+    fi
+
+    sleep 5
+done

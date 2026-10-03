@@ -1,18 +1,8 @@
 # setup/hosts/gaming-pc
 
-PACKAGE_SETS=(
-    base
-    desktop
-    development
+source "$SETUP_DIR/profiles/common"
+
+PACKAGE_SETS+=(
     gaming
     hardware/nvidia
 )
-
-AUR_PACKAGES=(
-    zoom
-)
-
-#CONFIG_SETS=(
-#    desktop
-#    hardware/nvidia
-#)

@@ -1,11 +1,3 @@
 # setup/hosts/main-desktop
 
-PACKAGE_SETS=(
-    base
-    desktop
-    development
-)
-
-#CONFIG_SETS=(
-#    desktop
-#)
+source "$SETUP_DIR/profiles/common"

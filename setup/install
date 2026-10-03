@@ -3,7 +3,48 @@
 set -euo pipefail
 
 SETUP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-HOST="${1:-$(hostname)}"
+HOST=""
+DRY_RUN=false
+
+usage() {
+    echo "Usage: ${0##*/} [--dry-run] [HOST]"
+}
+
+for arg in "$@"; do
+    case "$arg" in
+        --dry-run)
+            DRY_RUN=true
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        -*)
+            echo "Unknown option: $arg" >&2
+            usage >&2
+            exit 1
+            ;;
+        *)
+            if [[ -n "$HOST" || -z "$arg" ]]; then
+                usage >&2
+                exit 1
+            fi
+            HOST="$arg"
+            ;;
+    esac
+done
+
+HOST="${HOST:-$(hostname)}"
+
+run() {
+    if [[ "$DRY_RUN" == true ]]; then
+        printf '[dry-run] Would run:'
+        printf ' %q' "$@"
+        printf '\n'
+    else
+        "$@"
+    fi
+}
 
 HOST_FILE="$SETUP_DIR/hosts/$HOST"
 
@@ -12,6 +53,8 @@ if [[ ! -f "$HOST_FILE" ]]; then
     exit 1
 fi
 
+PACKAGE_SETS=()
+CONFIG_SETS=()
 # shellcheck source=/dev/null
 source "$HOST_FILE"
 
@@ -40,7 +83,7 @@ if ((${#packages[@]})); then
     echo "Installing packages:"
     printf '  %s\n' "${packages[@]}"
 
-    sudo pacman -S --needed "${packages[@]}"
+    run sudo pacman -S --needed "${packages[@]}"
 fi
 
 for set in "${CONFIG_SETS[@]}"; do
@@ -53,8 +96,12 @@ for set in "${CONFIG_SETS[@]}"; do
 
     echo
     echo "Applying configuration: $set"
-    "$script"
+    run "$script"
 done
 
 echo
-echo "Host configuration complete."
+if [[ "$DRY_RUN" == true ]]; then
+    echo "Dry run complete. No installation or configuration commands were executed."
+else
+    echo "Host configuration complete."
+fi

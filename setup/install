@@ -62,6 +62,7 @@ fi
 PACKAGE_SETS=()
 CONFIG_SETS=()
 AUR_PACKAGES=()
+EXTRA_COMMANDS=()
 # shellcheck source=/dev/null
 source "$HOST_FILE"
 
@@ -114,6 +115,8 @@ if [[ "$LIST" == true ]]; then
     echo
     print_list "AUR packages (declared only; installation is not implemented)" "${AUR_PACKAGES[@]}"
     echo
+    print_list "Extra commands" "${EXTRA_COMMANDS[@]}"
+    echo
     print_list "Configuration sets" "${CONFIG_SETS[@]}"
     exit 0
 fi
@@ -127,6 +130,15 @@ if ((${#packages[@]})); then
 
     run sudo pacman -S --needed "${packages[@]}"
 fi
+
+for command in "${EXTRA_COMMANDS[@]}"; do
+    echo
+    echo "Running extra command: $command"
+    (
+        cd "$SETUP_DIR"
+        run bash -euo pipefail -c "$command"
+    )
+done
 
 for i in "${!CONFIG_SETS[@]}"; do
     echo

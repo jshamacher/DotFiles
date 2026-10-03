@@ -5,15 +5,21 @@ set -euo pipefail
 SETUP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 HOST=""
 DRY_RUN=false
+LIST=false
 
 usage() {
-    echo "Usage: ${0##*/} [--dry-run] [HOST]"
+    echo "Usage: ${0##*/} [--dry-run] [--list] [HOST]"
+    echo "  --dry-run  Show commands without running them."
+    echo "  --list     Summarize the resolved host configuration without running actions."
 }
 
 for arg in "$@"; do
     case "$arg" in
         --dry-run)
             DRY_RUN=true
+            ;;
+        --list)
+            LIST=true
             ;;
         -h|--help)
             usage
@@ -55,10 +61,9 @@ fi
 
 PACKAGE_SETS=()
 CONFIG_SETS=()
+AUR_PACKAGES=()
 # shellcheck source=/dev/null
 source "$HOST_FILE"
-
-echo "Configuring host: $HOST"
 
 packages=()
 
@@ -70,13 +75,50 @@ for set in "${PACKAGE_SETS[@]}"; do
         exit 1
     fi
 
-    while IFS= read -r package; do
+    while IFS= read -r package || [[ -n "$package" ]]; do
         [[ -z "$package" ]] && continue
         [[ "$package" =~ ^[[:space:]]*# ]] && continue
 
         packages+=("$package")
     done < "$file"
 done
+
+config_scripts=()
+for set in "${CONFIG_SETS[@]}"; do
+    script="$SETUP_DIR/config/$set"
+
+    if [[ ! -x "$script" ]]; then
+        echo "Configuration set does not exist or is not executable: $set" >&2
+        exit 1
+    fi
+
+    config_scripts+=("$script")
+done
+
+print_list() {
+    local label="$1"
+    shift
+    echo "$label:"
+    if (($#)); then
+        printf '  %s\n' "$@"
+    else
+        echo "  (none)"
+    fi
+}
+
+if [[ "$LIST" == true ]]; then
+    echo "Host: $HOST"
+    echo
+    print_list "Package sets" "${PACKAGE_SETS[@]}"
+    echo "Repository packages: ${#packages[@]}"
+    echo
+    print_list "AUR packages (declared only; installation is not implemented)" "${AUR_PACKAGES[@]}"
+    echo
+    print_list "Configuration sets" "${CONFIG_SETS[@]}"
+    exit 0
+fi
+
+echo "Configuring host: $HOST"
 
 if ((${#packages[@]})); then
     echo
@@ -86,17 +128,10 @@ if ((${#packages[@]})); then
     run sudo pacman -S --needed "${packages[@]}"
 fi
 
-for set in "${CONFIG_SETS[@]}"; do
-    script="$SETUP_DIR/config/$set"
-
-    if [[ ! -x "$script" ]]; then
-        echo "Configuration set does not exist or is not executable: $set" >&2
-        exit 1
-    fi
-
+for i in "${!CONFIG_SETS[@]}"; do
     echo
-    echo "Applying configuration: $set"
-    run "$script"
+    echo "Applying configuration: ${CONFIG_SETS[$i]}"
+    run "${config_scripts[$i]}"
 done
 
 echo

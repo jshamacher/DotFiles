@@ -65,13 +65,6 @@ setopt HIST_BEEP                # Beep when accessing non-existent history.
 eval "$(/usr/bin/mise activate zsh)"
 
 #
-# Tmux.
-#
-if [ -r "$HOME/.bin/tmuxinator.zsh" ]; then
-    source "$HOME/.bin/tmuxinator.zsh"
-fi
-
-#
 # Completion.
 #
 setopt AUTO_PARAM_SLASH         # If completed parameter is a directory, add a trailing slash.

@@ -8,5 +8,5 @@ EXTRA_COMMANDS+=(
     # development
     "mise use -g herdr"
     "mise use -g pi"
-    "sh -c 'curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh"
+    "sh -c 'curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh'"
 )

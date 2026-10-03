@@ -1,0 +1,11 @@
+# setup/hosts/main-desktop
+
+PACKAGE_SETS=(
+    base
+    desktop
+    development
+)
+
+#CONFIG_SETS=(
+#    desktop
+#)

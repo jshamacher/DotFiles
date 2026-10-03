@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+SETUP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+HOST="${1:-$(hostname)}"
+
+HOST_FILE="$SETUP_DIR/hosts/$HOST"
+
+if [[ ! -f "$HOST_FILE" ]]; then
+    echo "No configuration found for host: $HOST" >&2
+    exit 1
+fi
+
+# shellcheck source=/dev/null
+source "$HOST_FILE"
+
+echo "Configuring host: $HOST"
+
+packages=()
+
+for set in "${PACKAGE_SETS[@]}"; do
+    file="$SETUP_DIR/packages/$set"
+
+    if [[ ! -f "$file" ]]; then
+        echo "Package set does not exist: $set" >&2
+        exit 1
+    fi
+
+    while IFS= read -r package; do
+        [[ -z "$package" ]] && continue
+        [[ "$package" =~ ^[[:space:]]*# ]] && continue
+
+        packages+=("$package")
+    done < "$file"
+done
+
+if ((${#packages[@]})); then
+    echo
+    echo "Installing packages:"
+    printf '  %s\n' "${packages[@]}"
+
+    sudo pacman -S --needed "${packages[@]}"
+fi
+
+for set in "${CONFIG_SETS[@]}"; do
+    script="$SETUP_DIR/config/$set"
+
+    if [[ ! -x "$script" ]]; then
+        echo "Configuration set does not exist or is not executable: $set" >&2
+        exit 1
+    fi
+
+    echo
+    echo "Applying configuration: $set"
+    "$script"
+done
+
+echo
+echo "Host configuration complete."

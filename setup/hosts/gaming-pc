@@ -1,0 +1,18 @@
+# setup/hosts/gaming-pc
+
+PACKAGE_SETS=(
+    base
+    desktop
+    development
+    gaming
+    hardware/nvidia
+)
+
+AUR_PACKAGES=(
+    zoom
+)
+
+#CONFIG_SETS=(
+#    desktop
+#    hardware/nvidia
+#)

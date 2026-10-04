@@ -5,6 +5,8 @@ return {
     event = "InsertEnter",
     opts = {
       keymap = { preset = "default" },
+      -- Leave : command-line completion to Vim's wildmode settings.
+      cmdline = { enabled = false },
       appearance = {
         nerd_font_variant = "mono",
         kind_icons = {

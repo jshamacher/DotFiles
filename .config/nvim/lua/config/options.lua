@@ -44,9 +44,11 @@ opt.scrolloff = 1
 opt.sidescrolloff = 15
 opt.textwidth = 100
 
-opt.wildmode = "list:longest"
+-- Complete the common prefix first, then list matches on the next Tab.
+opt.wildmode = "longest,list"
 opt.wildmenu = true
 opt.wildignore = { "*.o", "*.obj", "*~" }
+opt.wildoptions = ""
 
 opt.undofile = true
 opt.undodir = vim.fn.stdpath("state") .. "/undo//"
@@ -68,4 +70,3 @@ opt.completeopt = { "menuone", "noselect" }
 if vim.fn.executable("wl-copy") == 1 then
   opt.clipboard = "unnamedplus"
 end
-

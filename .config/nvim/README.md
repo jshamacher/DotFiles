@@ -33,7 +33,11 @@ Pause for half a second after pressing `<Space>` to see the available mappings. 
 
 ## Completion
 
-Completion uses `blink.cmp`. Its default keys include:
+Command-line completion uses Vim's native completion: `<Tab>` completes the longest
+common prefix, and the next `<Tab>` lists matches. If there is no longer common prefix,
+Vim may list matches on the first press. A single match is completed in full.
+
+Insert-mode completion uses `blink.cmp`. Its default keys include:
 
 - `<C-n>` / `<C-p>` to move through suggestions
 - `<C-y>` to accept a suggestion

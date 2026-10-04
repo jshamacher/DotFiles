@@ -4,6 +4,10 @@
     "height": 28,
     "spacing": 12,
 
+    "modules-left": [
+        "hyprland/workspaces"
+    ],
+
     "modules-right": [
         "cpu",
         "memory",
@@ -12,6 +16,11 @@
         "tray",
         "clock"
     ],
+
+    "hyprland/workspaces": {
+        "format": "{id}",
+        "sort-by-number": true
+    },
 
     "cpu": {
         "interval": 2,

@@ -1,4 +1,5 @@
 --fixed-strings
 --hidden
+--no-ignore-vcs
 --glob
 !.git

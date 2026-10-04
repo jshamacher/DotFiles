@@ -5,6 +5,10 @@ PACKAGE_SETS+=(
 )
 
 EXTRA_COMMANDS+=(
+    # base
+    # TODO: there is a config file I could check in, but being security-related I'm a bit paranoid.
+    'bw config server https://vaultwarden.brutallogic.net'
+
     # development
     "mise use -g herdr"
     "mise use -g pi"

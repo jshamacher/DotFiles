@@ -21,6 +21,23 @@
 ------------------
 
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
+
+-- For office-nuc: pin the left/right order based on the serial numbers.
+hl.monitor({
+    output   = "desc:LG Electronics LG Ultra HD 0x0001EE58",
+    mode     = "preferred",
+    position = "auto-left",
+    scale    = 1,
+})
+
+hl.monitor({
+    output   = "desc:LG Electronics LG Ultra HD 0x0005C1FB",
+    mode     = "preferred",
+    position = "auto-right",
+    scale    = 1,
+})
+
+-- Generic fallback.
 hl.monitor({
     output   = "",
     mode     = "preferred",

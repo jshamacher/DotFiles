@@ -7,7 +7,9 @@ PACKAGE_SETS+=(
 EXTRA_COMMANDS+=(
     # base
     # TODO: there is a config file I could check in, but being security-related I'm a bit paranoid.
-    'bw config server https://vaultwarden.brutallogic.net'
+    "bw config server https://vaultwarden.brutallogic.net"
+    "systemctl --user daemon-reload"
+    "systemctl --user enable --now ssh-agent.service"
 
     # development
     "mise use -g herdr"

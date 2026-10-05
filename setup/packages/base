@@ -1,5 +1,7 @@
 PACKAGES+=(
+    base-devel
     bitwarden-cli
+    cifs-utils
     git
     inetutils
     iw

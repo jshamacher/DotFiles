@@ -1,2 +1,4 @@
-nvidia-open
-nvidia-utils
+PACKAGES+=(
+    nvidia-open
+    nvidia-utils
+)

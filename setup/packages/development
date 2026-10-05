@@ -1,2 +1,4 @@
-git-delta
-mise
+PACKAGES+=(
+    git-delta
+    mise
+)

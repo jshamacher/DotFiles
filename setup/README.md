@@ -14,13 +14,44 @@ configuration actions. When both flags are supplied, `--list` takes precedence.
 
 Host files are Bash files defining arrays:
 
-- `PACKAGE_SETS`: package lists under `packages/`, installed with pacman.
+- `PACKAGE_SETS`: Bash files under `packages/` declaring repository and AUR packages.
+- `PACKAGES`: additional repository packages, installed with pacman.
+- `AUR_PACKAGES`: additional AUR packages, installed with an AUR helper.
+- `AUR_HELPER`: helper executable (defaults to `yay`; can also be set in the environment).
 - `EXTRA_COMMANDS`: shell commands for software installed outside pacman.
 - `CONFIG_SETS`: executable scripts under `config/`.
-- `AUR_PACKAGES`: currently displayed only; AUR installation is deferred.
 
-Installation runs package sets first, then extra commands in their declared
-order, then configuration scripts. Omitted arrays default to empty.
+Installation runs repository packages first, then AUR packages, then extra
+commands in their declared order, then configuration scripts. Omitted arrays
+default to empty.
+
+## Package sets
+
+Each package set appends to `PACKAGES` and/or `AUR_PACKAGES`. For example,
+`packages/media` contains:
+
+```bash
+PACKAGES+=(
+    electron41
+)
+
+AUR_PACKAGES+=(
+    plexamp-bin
+)
+```
+
+The common profile includes `media`, so both hosts receive these packages.
+Package sets are sourced in every mode, just like host files; keep them
+declarative and use `+=` to preserve packages from other sets and the host.
+
+Repository packages use `sudo pacman -S --needed`. AUR packages use
+`yay -S --aur --needed` as the invoking user, with the helper's normal interactive
+prompts. Install the helper before running setup (see the
+[yay installation instructions](https://github.com/Jguer/yay#installation)).
+For another compatible helper, set `AUR_HELPER=paru` in the host file or run
+`AUR_HELPER=paru ./install HOST`. If AUR packages are selected, a missing helper
+or running as root stops setup before any installation actions.
+`--list` and `--dry-run` work without an installed helper.
 
 ## Extra commands
 

@@ -1,3 +1,5 @@
-# setup/hosts/main-desktop
-
 source "$SETUP_DIR/profiles/common"
+
+PACKAGE_SETS+=(
+    media
+)

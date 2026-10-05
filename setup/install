@@ -61,12 +61,12 @@ fi
 
 PACKAGE_SETS=()
 CONFIG_SETS=()
+PACKAGES=()
 AUR_PACKAGES=()
 EXTRA_COMMANDS=()
+AUR_HELPER="${AUR_HELPER:-yay}"
 # shellcheck source=/dev/null
 source "$HOST_FILE"
-
-packages=()
 
 for set in "${PACKAGE_SETS[@]}"; do
     file="$SETUP_DIR/packages/$set"
@@ -76,12 +76,8 @@ for set in "${PACKAGE_SETS[@]}"; do
         exit 1
     fi
 
-    while IFS= read -r package || [[ -n "$package" ]]; do
-        [[ -z "$package" ]] && continue
-        [[ "$package" =~ ^[[:space:]]*# ]] && continue
-
-        packages+=("$package")
-    done < "$file"
+    # shellcheck source=/dev/null
+    source "$file"
 done
 
 config_scripts=()
@@ -111,9 +107,9 @@ if [[ "$LIST" == true ]]; then
     echo "Host: $HOST"
     echo
     print_list "Package sets" "${PACKAGE_SETS[@]}"
-    echo "Repository packages: ${#packages[@]}"
+    print_list "Repository packages (${#PACKAGES[@]})" "${PACKAGES[@]}"
     echo
-    print_list "AUR packages (declared only; installation is not implemented)" "${AUR_PACKAGES[@]}"
+    print_list "AUR packages" "${AUR_PACKAGES[@]}"
     echo
     print_list "Extra commands" "${EXTRA_COMMANDS[@]}"
     echo
@@ -121,14 +117,33 @@ if [[ "$LIST" == true ]]; then
     exit 0
 fi
 
+if [[ "$DRY_RUN" == false ]] && ((${#AUR_PACKAGES[@]})); then
+    if ! command -v "$AUR_HELPER" >/dev/null 2>&1; then
+        echo "AUR helper not found: $AUR_HELPER. Install it before running this script." >&2
+        exit 1
+    fi
+    if ((EUID == 0)); then
+        echo "Run this script as a regular user; AUR packages cannot be built as root." >&2
+        exit 1
+    fi
+fi
+
 echo "Configuring host: $HOST"
 
-if ((${#packages[@]})); then
+if ((${#PACKAGES[@]})); then
     echo
     echo "Installing packages:"
-    printf '  %s\n' "${packages[@]}"
+    printf '  %s\n' "${PACKAGES[@]}"
 
-    run sudo pacman -S --needed "${packages[@]}"
+    run sudo pacman -S --needed "${PACKAGES[@]}"
+fi
+
+if ((${#AUR_PACKAGES[@]})); then
+    echo
+    echo "Installing AUR packages:"
+    printf '  %s\n' "${AUR_PACKAGES[@]}"
+
+    run "$AUR_HELPER" -S --aur --needed "${AUR_PACKAGES[@]}"
 fi
 
 for command in "${EXTRA_COMMANDS[@]}"; do

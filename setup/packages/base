@@ -1,11 +1,13 @@
-bitwarden-cli
-git
-inetutils
-iw
-less
-neovim
-networkmanager
-openssh
-ripgrep
-tmux
-zsh
+PACKAGES+=(
+    bitwarden-cli
+    git
+    inetutils
+    iw
+    less
+    neovim
+    networkmanager
+    openssh
+    ripgrep
+    tmux
+    zsh
+)

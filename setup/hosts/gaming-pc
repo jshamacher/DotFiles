@@ -1,8 +1,7 @@
-# setup/hosts/gaming-pc
-
 source "$SETUP_DIR/profiles/common"
 
 PACKAGE_SETS+=(
     gaming
     hardware/nvidia
+    media
 )

@@ -1,0 +1,7 @@
+PACKAGES+=(
+    electron41
+)
+
+AUR_PACKAGES+=(
+    plexamp-bin
+)

@@ -10,6 +10,7 @@ PACKAGES+=(
     networkmanager
     openssh
     ripgrep
+    rsync
     tmux
     zsh
 )

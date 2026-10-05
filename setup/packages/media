@@ -1,5 +1,7 @@
 PACKAGES+=(
     electron41
+    vlc
+    vlc-plugins-all
 )
 
 AUR_PACKAGES+=(

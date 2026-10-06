@@ -1,14 +1,19 @@
-directory: /media/nas-music2
+directory: /mnt/nas-music2
 import:
   bell: yes
   move: yes
 library: ~/.config/beets/musiclibrary.db
 per_disc_numbering: yes
-plugins: fetchart embedart zero lastgenre
+plugins: musicbrainz fetchart embedart zero lastgenre
 fetchart:
   cautious: yes
   enforce_ratio: yes
-  sources: coverart itunes amazon albumart filesystem
+  sources:
+    - coverart
+    - itunes
+    - amazon
+    - albumart
+    - filesystem
 embedart:
   remove_art_file: yes
 paths:

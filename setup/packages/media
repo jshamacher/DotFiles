@@ -1,5 +1,9 @@
 PACKAGES+=(
+    beets
     electron41
+    # These two support beets - optional but used by my workflows.
+    python-pillow
+    python-pylast
     vlc
     vlc-plugins-all
 )

@@ -1,0 +1,13 @@
+[Unit]
+Description=Inhibit idle suspend while audio is playing
+After=pipewire.service
+Wants=pipewire.service
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/audio-inhibit
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=default.target

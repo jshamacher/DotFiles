@@ -10,6 +10,7 @@ EXTRA_COMMANDS+=(
     "bw config server https://vaultwarden.brutallogic.net"
     "systemctl --user daemon-reload"
     "systemctl --user enable --now ssh-agent.service"
+    "systemctl --user enable --now audio-inhibit.service"
 
     # development
     "mise use -g herdr"

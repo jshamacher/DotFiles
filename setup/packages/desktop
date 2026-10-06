@@ -7,6 +7,8 @@ PACKAGES+=(
     ghostty
     greetd
     greetd-tuigreet
+    gvfs
+    gvfs-mtp
     hypridle
     hyprland
     hyprlock
@@ -21,6 +23,8 @@ PACKAGES+=(
     pipewire-pulse
     polkit-gnome
     thunar
+    thunar-volman
+    udisks2
     waybar
     wl-clipboard
     xdg-desktop-portal-hyprland

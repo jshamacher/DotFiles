@@ -5,6 +5,7 @@ PACKAGES+=(
     git
     inetutils
     iw
+    jq
     less
     neovim
     networkmanager

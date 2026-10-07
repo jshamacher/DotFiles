@@ -7,6 +7,8 @@ PACKAGES+=(
     iw
     jq
     less
+    msmtp
+    msmtp-mta
     neovim
     networkmanager
     openssh

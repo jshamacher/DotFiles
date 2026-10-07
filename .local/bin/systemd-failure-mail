@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -u
+
+unit="$1"
+recipient="hamacher@brutallogic.net"
+hostname="$(hostname)"
+
+{
+    printf 'To: %s\n' "$recipient"
+    printf 'Subject: [%s] systemd failure: %s\n' "$hostname" "$unit"
+    printf '\n'
+
+    printf 'Unit %s failed on %s.\n\n' "$unit" "$hostname"
+
+    printf '%s\n' '--- systemctl status ---'
+    systemctl --user status "$unit" --no-pager --full || true
+
+    printf '\n%s\n' '--- recent journal ---'
+    journalctl --user \
+        --unit="$unit" \
+        --no-pager \
+        --lines=100 \
+        --output=short-iso
+} | /usr/bin/msmtp "$recipient"

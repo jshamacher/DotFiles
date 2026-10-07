@@ -1,0 +1,6 @@
+[Unit]
+Description=Send failure email for %i
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/systemd-failure-mail %i

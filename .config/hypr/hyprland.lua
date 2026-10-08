@@ -296,6 +296,11 @@ hl.bind(mainMod .. " + SHIFT + L", hl.dsp.exec_cmd("hyprlock --no-fade-in -g 0")
 hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd(organizer))
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("steam"))
 
+-- Grouped windows.
+hl.bind(mainMod .. " + CTRL + T", hl.dsp.group.toggle())
+hl.bind(mainMod .. " + CTRL + RIGHT", hl.dsp.group.next())
+hl.bind(mainMod .. " + CTRL + LEFT", hl.dsp.group.prev())
+
 -- TODO: defaults below...
 local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
 -- closeWindowBind:set_enabled(false)

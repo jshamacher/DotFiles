@@ -1,5 +1,6 @@
 PACKAGES+=(
     beets
+    easytag
     electron41
     # These two support beets - optional but used by my workflows.
     python-pillow
@@ -10,4 +11,5 @@ PACKAGES+=(
 
 AUR_PACKAGES+=(
     plexamp-bin
+    shntool
 )

@@ -300,13 +300,17 @@ hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("steam"))
 hl.bind(mainMod .. " + CTRL + T", hl.dsp.group.toggle())
 hl.bind(mainMod .. " + CTRL + RIGHT", hl.dsp.group.next())
 hl.bind(mainMod .. " + CTRL + LEFT", hl.dsp.group.prev())
+hl.bind(mainMod .. " + CTRL + U", hl.dsp.window.move({ out_of_group = true }))
+hl.bind(mainMod .. " + CTRL + L", hl.dsp.group.lock_active({ action = "toggle" }))
+
+hl.bind(mainMod .. " + CTRL + J", hl.dsp.layout("togglesplit"))
 
 -- TODO: defaults below...
 local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
 -- closeWindowBind:set_enabled(false)
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
-hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
+-- TODO: defaults above...
 
 -- Move focus with mainMod + arrow keys
 hl.bind(mainMod .. " + LEFT",  hl.dsp.focus({ direction = "left" }))

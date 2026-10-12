@@ -23,6 +23,9 @@ PACKAGES+=(
     pipewire-alsa
     pipewire-pulse
     polkit-gnome
+    sane
+    sane-airscan
+    simple-scan
     thunar
     thunar-volman
     udisks2

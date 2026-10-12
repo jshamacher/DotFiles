@@ -11,6 +11,7 @@ PACKAGES+=(
     msmtp-mta
     neovim
     networkmanager
+    openbsd-netcat
     openssh
     ripgrep
     rsync

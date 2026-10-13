@@ -3,6 +3,7 @@ PACKAGES+=(
     bluez
     bluez-utils
     firefox
+    foliate
     fuzzel
     ghostty
     greetd

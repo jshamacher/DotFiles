@@ -2,6 +2,7 @@ PACKAGES+=(
     beets
     easytag
     electron41
+    mediainfo
     # These two support beets - optional but used by my workflows.
     python-pillow
     python-pylast

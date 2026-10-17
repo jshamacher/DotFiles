@@ -1,0 +1,13 @@
+[Unit]
+Description=Back up configured directories with rsync
+OnFailure=failure-mail@%n.service
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/rsync-backup
+Environment=SSH_AUTH_SOCK=%t/ssh-agent.socket
+TimeoutStartSec=infinity
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+UMask=0077

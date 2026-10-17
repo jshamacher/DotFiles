@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily rsync backup (catch up after resume or login)
+
+[Timer]
+OnCalendar=*-*-* 03:00:00
+Persistent=true
+WakeSystem=false
+
+[Install]
+WantedBy=timers.target

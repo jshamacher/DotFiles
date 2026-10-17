@@ -1,0 +1,34 @@
+# Copy this directory, ~/.local/bin/rsync-backup, and the rsync-backup user
+# service/timer to other computers. Requires Python 3.11+, rsync 3.2.3+, SSH.
+# Uses ~/.ssh/config; the key must work without an interactive passphrase.
+# {hostname} is replaced automatically; a literal machine name also works.
+destination = "de1165@rsync.net:backups/{hostname}/"
+# Sources and exclusions belong in hosts/<hostname>.toml beside this file.
+# A missing host file is an error; there is no fallback list of sources.
+
+# Archive preserves symlinks, permissions, and modification times. Ownership
+# belongs to the remote account. The script always uses --delete-delay and
+# --delete-excluded: each configured source is mirrored, including exclusions.
+# Removing a source from the host file leaves its entire remote directory alone.
+# Existing files are replaced in the backup tree; this is not versioning.
+# Partial transfers are staged separately and reused after interruption.
+rsync_options = [
+  "--archive", "--no-owner", "--no-group", "--mkpath",
+  "--partial-dir=.rsync-partial", "--human-readable", "--stats", "--timeout=300",
+]
+
+ssh_command = "ssh -o BatchMode=yes -o ConnectTimeout=30 -o ServerAliveInterval=30 -o ServerAliveCountMax=3"
+
+# Allow time for networking to recover after resume. Only failed sources retry.
+attempts = 3
+retry_delay_seconds = 60
+
+# Preview: ~/.local/bin/rsync-backup --dry-run
+# Run now: systemctl --user start rsync-backup.service
+# Logs: journalctl --user -u rsync-backup.service
+# Enable: systemctl --user daemon-reload
+#         systemctl --user enable --now rsync-backup.timer
+# Schedule: edit ~/.config/systemd/user/rsync-backup.timer, then daemon-reload
+#           and systemctl --user restart rsync-backup.timer.
+# These are user units: they start at login. Persistent=true catches missed runs.
+# Remove OnFailure from the service on machines without failure-mail@.service.

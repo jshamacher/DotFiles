@@ -1,0 +1,115 @@
+#!/usr/bin/env python3
+"""Config-driven directory backups. Requires Python 3.11+, rsync, and SSH.
+
+Usage: rsync-backup [--config FILE] [--dry-run]
+The default config is $XDG_CONFIG_HOME/rsync-backup/config.toml.
+Sources and exclusions are read from hosts/<hostname>.toml beside that config.
+Directory names are preserved: ~/Documents -> DESTINATION/Documents/.
+"""
+
+import argparse
+import fcntl
+import os
+from pathlib import Path
+import shlex
+import socket
+import subprocess
+import sys
+import time
+import tomllib
+
+
+def string_list(config, key, default=None):
+    value = config.get(key, default)
+    if not isinstance(value, list) or not all(isinstance(x, str) for x in value):
+        raise ValueError(f"{key} must be an array of strings")
+    return value
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--config", type=Path, default=Path(
+        os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")
+    ) / "rsync-backup/config.toml")
+    parser.add_argument("--dry-run", action="store_true")
+    args = parser.parse_args()
+    config_path = args.config.expanduser()
+    with config_path.open("rb") as file:
+        config = tomllib.load(file)
+    allowed = {"destination", "rsync_options",
+               "ssh_command", "attempts", "retry_delay_seconds"}
+    if unknown := config.keys() - allowed:
+        raise ValueError(f"Unknown config keys: {', '.join(sorted(unknown))}")
+    hostname = socket.gethostname()
+    host_path = config_path.parent / "hosts" / f"{hostname}.toml"
+    with host_path.open("rb") as file:
+        host_config = tomllib.load(file)
+    if unknown := host_config.keys() - {"sources", "excludes"}:
+        raise ValueError(f"Unknown host config keys: {', '.join(sorted(unknown))}")
+    destination = config.get("destination")
+    if not isinstance(destination, str) or not destination.strip():
+        raise ValueError("destination must be a nonempty string")
+    destination = destination.replace("{hostname}", hostname).rstrip("/") + "/"
+    sources = [Path(source).expanduser().absolute()
+               for source in string_list(host_config, "sources")]
+    if not sources or any(not source.is_dir() or not source.name for source in sources):
+        raise ValueError("sources must contain existing, named directories")
+    if len({source.name for source in sources}) != len(sources):
+        raise ValueError("Source directory names must be unique")
+    options = string_list(config, "rsync_options", [
+        "--archive", "--no-owner", "--no-group", "--mkpath", "--partial-dir=.rsync-partial",
+        "--human-readable", "--stats", "--timeout=300",
+    ])
+    excludes = string_list(host_config, "excludes", [])
+    ssh_command = config.get("ssh_command", "ssh -o BatchMode=yes -o ConnectTimeout=30")
+    if not isinstance(ssh_command, str) or not ssh_command:
+        raise ValueError("ssh_command must be a nonempty string")
+    attempts = config.get("attempts", 3)
+    delay = config.get("retry_delay_seconds", 60)
+    if type(attempts) is not int or attempts < 1:
+        raise ValueError("attempts must be a positive integer")
+    if type(delay) is not int or delay < 0:
+        raise ValueError("retry_delay_seconds must be a nonnegative integer")
+
+    # Hold the lock across retries; manual runs cannot overlap the timer job.
+    state = Path(os.environ.get("XDG_STATE_HOME", Path.home() / ".local/state")) / "rsync-backup"
+    state.mkdir(parents=True, exist_ok=True)
+    with (state / "lock").open("a") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            print("Another backup is already running.", flush=True)
+            return 1
+        failed = sources
+        for attempt in range(1, (1 if args.dry_run else attempts) + 1):
+            pending, failed = failed, []
+            for source in pending:
+                # Each named source is its own deletion scope. Never sync the
+                # destination root: removing a source must leave its backup alone.
+                command = ["rsync", *options, "--delete-delay", "--delete-excluded",
+                           "--protect-args", "-e", ssh_command]
+                command += [f"--exclude={pattern}" for pattern in excludes]
+                if args.dry_run:
+                    command += ["--dry-run", "--itemize-changes"]
+                command += ["--", str(source), destination]
+                print(f"Attempt {attempt}: {shlex.join(command)}", flush=True)
+                result = subprocess.run(command, check=False)
+                if result.returncode:
+                    print(f"Backup failed for {source}: rsync exit {result.returncode}",
+                          file=sys.stderr, flush=True)
+                    failed.append(source)
+            if not failed:
+                print("Dry run complete." if args.dry_run else "Backup complete.", flush=True)
+                return 0
+            if not args.dry_run and attempt < attempts:
+                print(f"Retrying failed sources in {delay}s.", flush=True)
+                time.sleep(delay)
+        return 1
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except (OSError, ValueError) as error:
+        print(f"rsync-backup: {error}", file=sys.stderr)
+        sys.exit(1)

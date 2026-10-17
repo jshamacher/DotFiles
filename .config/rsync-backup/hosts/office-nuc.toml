@@ -1,0 +1,10 @@
+# This file is required on office-nuc. Add hosts/<hostname>.toml for other hosts.
+# Lists live entirely in this file; they are not merged with shared defaults.
+sources = ["~/Documents", "~/Projects"]
+
+# Rsync patterns relative to the transfer root, including the source name.
+# Excluded files/directories are also deleted from the current remote backup.
+# Examples (not enabled):
+#   "/Projects/massive-repo-I-cloned-from-github/"  -- one specific directory
+#   "node_modules/"                               -- anywhere in any source
+excludes = []

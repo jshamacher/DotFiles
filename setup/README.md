@@ -6,11 +6,15 @@ Define hosts in `hosts/<hostname>`, then run:
 ./install [HOST]
 ./install --list [HOST]
 ./install --dry-run [HOST]
+./install --packages-only [HOST]
 ```
 
 Omit `HOST` to use the current hostname. `--list` summarizes the resolved
 configuration; `--dry-run` prints the commands without running installation or
-configuration actions. When both flags are supplied, `--list` takes precedence.
+configuration actions. `--packages-only` installs repository and AUR packages,
+skipping extra commands and configuration scripts (including validation of those
+scripts). Combine it with `--dry-run` to preview only package installation.
+`--list` takes precedence over the other flags and shows the full configuration.
 
 Host files are Bash files defining arrays:
 

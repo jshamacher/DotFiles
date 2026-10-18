@@ -6,11 +6,13 @@ SETUP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 HOST=""
 DRY_RUN=false
 LIST=false
+PACKAGES_ONLY=false
 
 usage() {
-    echo "Usage: ${0##*/} [--dry-run] [--list] [HOST]"
+    echo "Usage: ${0##*/} [--dry-run] [--list] [--packages-only] [HOST]"
     echo "  --dry-run  Show commands without running them."
     echo "  --list     Summarize the resolved host configuration without running actions."
+    echo "  --packages-only  Install repository and AUR packages only; skip extra commands and configuration scripts."
 }
 
 for arg in "$@"; do
@@ -20,6 +22,9 @@ for arg in "$@"; do
             ;;
         --list)
             LIST=true
+            ;;
+        --packages-only)
+            PACKAGES_ONLY=true
             ;;
         -h|--help)
             usage
@@ -81,16 +86,18 @@ for set in "${PACKAGE_SETS[@]}"; do
 done
 
 config_scripts=()
-for set in "${CONFIG_SETS[@]}"; do
-    script="$SETUP_DIR/config/$set"
+if [[ "$PACKAGES_ONLY" == false || "$LIST" == true ]]; then
+    for set in "${CONFIG_SETS[@]}"; do
+        script="$SETUP_DIR/config/$set"
 
-    if [[ ! -x "$script" ]]; then
-        echo "Configuration set does not exist or is not executable: $set" >&2
-        exit 1
-    fi
+        if [[ ! -x "$script" ]]; then
+            echo "Configuration set does not exist or is not executable: $set" >&2
+            exit 1
+        fi
 
-    config_scripts+=("$script")
-done
+        config_scripts+=("$script")
+    done
+fi
 
 print_list() {
     local label="$1"
@@ -146,20 +153,22 @@ if ((${#AUR_PACKAGES[@]})); then
     run "$AUR_HELPER" -S --aur --needed "${AUR_PACKAGES[@]}"
 fi
 
-for command in "${EXTRA_COMMANDS[@]}"; do
-    echo
-    echo "Running extra command: $command"
-    (
-        cd "$SETUP_DIR"
-        run bash -euo pipefail -c "$command"
-    )
-done
+if [[ "$PACKAGES_ONLY" == false ]]; then
+    for command in "${EXTRA_COMMANDS[@]}"; do
+        echo
+        echo "Running extra command: $command"
+        (
+            cd "$SETUP_DIR"
+            run bash -euo pipefail -c "$command"
+        )
+    done
 
-for i in "${!CONFIG_SETS[@]}"; do
-    echo
-    echo "Applying configuration: ${CONFIG_SETS[$i]}"
-    run "${config_scripts[$i]}"
-done
+    for i in "${!CONFIG_SETS[@]}"; do
+        echo
+        echo "Applying configuration: ${CONFIG_SETS[$i]}"
+        run "${config_scripts[$i]}"
+    done
+fi
 
 echo
 if [[ "$DRY_RUN" == true ]]; then

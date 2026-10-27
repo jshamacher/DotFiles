@@ -30,6 +30,7 @@ PACKAGES+=(
     thunar
     thunar-volman
     udisks2
+    unzip
     waybar
     wl-clipboard
     xdg-desktop-portal-hyprland

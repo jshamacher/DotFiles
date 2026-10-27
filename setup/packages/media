@@ -6,6 +6,7 @@ PACKAGES+=(
     # These two support beets - optional but used by my workflows.
     python-pillow
     python-pylast
+    unrar
     vlc
     vlc-plugins-all
 )

@@ -1,5 +1,6 @@
 PACKAGES+=(
     base-devel
+    bind
     bitwarden-cli
     cifs-utils
     git

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+HYPRIDLE_SUSPEND_TIMEOUT=900
+
+case "$(hostname)" in
+    office-nuc) HYPRIDLE_SUSPEND_TIMEOUT=3600 ;;
+esac
+
+export HYPRIDLE_SUSPEND_TIMEOUT
+exec hypridle "$@"

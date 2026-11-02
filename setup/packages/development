@@ -1,4 +1,11 @@
 PACKAGES+=(
+    docker
+    docker-compose
     git-delta
     mise
+)
+
+EXTRA_COMMANDS+=(
+    "sudo usermod -aG docker '$USER'"
+    "systemctl enable --now docker.socket"
 )

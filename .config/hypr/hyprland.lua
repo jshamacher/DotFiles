@@ -301,7 +301,7 @@ hl.bind(mainMod .. " + CTRL + T", hl.dsp.group.toggle())
 hl.bind(mainMod .. " + CTRL + RIGHT", hl.dsp.group.next())
 hl.bind(mainMod .. " + CTRL + LEFT", hl.dsp.group.prev())
 hl.bind(mainMod .. " + CTRL + U", hl.dsp.window.move({ out_of_group = true }))
-hl.bind(mainMod .. " + CTRL + L", hl.dsp.group.lock_active({ action = "toggle" }))
+hl.bind(mainMod .. " + CTRL + L", hl.dsp.group.lock({ action = "toggle" }))
 
 hl.bind(mainMod .. " + CTRL + J", hl.dsp.layout("togglesplit"))
 
